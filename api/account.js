@@ -1,4 +1,6 @@
+import { file } from "../lib/file.js";
 import { IsValid } from "../lib/is-valid/IsValid.js";
+import { utils } from "../lib/utils.js";
 
 const handler = {};
 
@@ -26,7 +28,7 @@ handler._innerMethods.get = (data, callback) => {
 };
 
 // POST - sukuriame paskyra
-handler._innerMethods.post = (data, callback) => {
+handler._innerMethods.post = async (data, callback) => {
   const { payload } = data;
 
   /*
@@ -37,10 +39,13 @@ handler._innerMethods.post = (data, callback) => {
         - isitikinti, jog atejusiame objekte nera kitu key's apart: email, fullname ir password
     */
 
-  const allowedKeys = ["fullname", "email", "pass"];
-  if (Object.keys(payload).length > allowedKeys.length) {
+  const [validErr, validMsg] = utils.objectValidator(payload, {
+    required: ["fullname", "email", "pass"],
+  });
+
+  if (validErr) {
     return callback(400, {
-      msg: "Atsiustuose duomenyse gali buti tik: fullname, email ir pass",
+      msg: validMsg,
     });
   }
 
@@ -73,14 +78,31 @@ handler._innerMethods.post = (data, callback) => {
         - jei ne - tęsiam
     */
 
+  // accounts/${user-email}.json
+  const [readErr] = await file.read("accounts", email + ".json");
+  if (!readErr) {
+    return callback(400, {
+      msg: "Paskyra jau egzistuoja",
+    });
+  }
+
   /*
     3) issaugoti duomenis (payload)
         - jei pavyko - paskyra sukurta
             - siunciam patvirtinimo laiska
         - jei nepavyko - error
     */
-
-  console.log(payload);
+  const [createErr, createMsg] = await file.create(
+    "accounts",
+    email + ".json",
+    payload
+  );
+  console.log(createMsg);
+  if (createErr) {
+    return callback(500, {
+      msg: "Nepavyko sukurti paskyrtos del vidines serverio klaidos. Pabandykite veliau",
+    });
+  }
 
   return callback(200, {
     msg: "Paskyra sukurta sekmingai",
