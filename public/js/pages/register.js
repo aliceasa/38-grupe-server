@@ -44,8 +44,6 @@ if (submitDOM) {
       delete data.repass;
       delete data.tos;
 
-      // async/await
-
       const response = await fetch(formDOM.action, {
         method: "POST",
         headers: {
@@ -53,9 +51,28 @@ if (submitDOM) {
         },
         body: JSON.stringify(data),
       });
-      const res = await response.json();
+      const resBody = await response.json();
 
-      console.log(res);
+      switch (resBody.msgType) {
+        case "error":
+          notificationsDOM.innerText = resBody.msg;
+          notificationsDOM.classList.remove("success");
+          notificationsDOM.classList.add("show");
+          break;
+
+        case "success":
+          notificationsDOM.innerText = resBody.msg;
+          notificationsDOM.classList.add("success", "show");
+          break;
+
+        case "redirect":
+          location.href = resBody.href;
+          break;
+
+        default:
+          console.log("Toks msgType nerastas:", resBody.msgType);
+          break;
+      }
     }
 
     // tikriname ar laukai ne tusti
