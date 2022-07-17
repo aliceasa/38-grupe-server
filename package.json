@@ -1,28 +1,20 @@
 {
-  "name": "38-grupe",
+  "name": "38-grupe-server",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon",
-    "switch": "nodemon ./js/switch.js",
-    "2d-array": "nodemon ./js/2d-array.js",
-    "callback": "nodemon ./js/callback.js",
-    "desctructuring": "nodemon ./js/desctructuring.js",
-    "spread": "nodemon ./js/spread.js",
-    "obj": "nodemon ./js/object.js",
-    "map": "nodemon ./js/map.js",
-    "class": "nodemon ./js/class.js",
-    "class-extend": "nodemon ./js/class-extend.js",
-    "class-router": "nodemon ./js/class-router.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "summation": "nodemon ./codewars/summation.js",
-    "cleanString": "nodemon ./codewars/cleanString.js"
+    "dev": "nodemon ./index.js",
+    "prod": "NODE_ENV=prod node .",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config ./jest.coverage.config.js --watchAll --passWithNoTests"
   },
   "keywords": [],
-  "author": "Alicija",
+  "author": "Rimantas",
   "license": "MIT",
   "devDependencies": {
+    "jest": "^28.1.1",
     "nodemon": "^2.0.16"
   }
 }
